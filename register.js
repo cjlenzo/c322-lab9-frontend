@@ -28,3 +28,34 @@ async function signup() {
         alert("Something went wrong!");
       }    
 }
+
+async function signin() {
+  let username = document.getElementById("username").value;
+  let password = document.getElementById("password").value;
+  
+  let user = { username: username, password: password };
+  let request = {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(user)
+  };
+
+  try {
+      let response = await fetch(getHost() + "/signin", request);
+      if (response.status === 200) {
+          let token = await response.text();
+          // Save the token in localStorage or session storage
+          localStorage.setItem("token", token);
+          alert("Login successful!");
+          // Redirect to a dashboard or home page
+          window.location.href = "index.html";
+      } else {
+          alert("Incorrect username or password.");
+      }
+  } catch (error) {
+      console.error("Error signing in:", error);
+      alert("An error occurred while signing in.");
+  }
+}

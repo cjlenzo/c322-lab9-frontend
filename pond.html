@@ -9,22 +9,26 @@
   </head>
   <body>
     <ul class="topnav">
-      <li><a class="active" href="index.html">Home</a></li>
+      <li><a href="index.html">Home</a></li>
       <li><a href="add.html">Add ducks</a></li>        
       <li><a href="search.html">Search ducks</a></li>
-      <li><a href="pond.html">Pond</a></li>
+      <li><a class="active" href="pond.html">Pond</a></li>
       <li class="right"><a  href="login.html">Login</a></li>
     </ul>
 
     <div id="pond"></div>
 
     <script>
-      let host = "http://localhost:8080";
+      let host = configuration.host();
       let ducks = [];
       displayTheDucks();
 
       async function getAll() {
-        let response = await fetch(host + "/ducks");
+        const headers = { "Authorization": `Bearer ${configuration.token()}` };
+        let response = await fetch(host + "/ducks", { headers })
+        if (response.status == 401) {
+          logout();
+        }
         let result = await response.json();
         return result;
       }

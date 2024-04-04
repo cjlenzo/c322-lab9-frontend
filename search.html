@@ -8,9 +8,9 @@
   </head>
   <body>
     <ul class="topnav">
-      <li><a class="active" href="index.html">Home</a></li>
+      <li><a href="index.html">Home</a></li>
       <li><a href="add.html">Add ducks</a></li>        
-      <li><a href="search.html">Search ducks</a></li>
+      <li><a class="active" href="search.html">Search ducks</a></li>
       <li><a href="pond.html">Pond</a></li>
       <li class="right"><a  href="login.html">Login</a></li>
     </ul>
@@ -28,13 +28,20 @@
       <tbody id="result"></tbody>
     </table>
 
+    <script src = "configuration.js"></script>
     <script>
       let ducks = [];
 
       async function getAll() {
-        let host = "http://localhost:8080";
-        return fetch(host + "/ducks")
-          .then((response) => response.json())
+        let host = configuration.host();
+        const headers = { "Authorization": `Bearer ${configuration.token()}` };
+        return fetch(host + "/ducks", { headers })
+          .then((response) => 
+          {
+            if(response.status == 401) {
+              logout();
+            }
+          })
           .catch((error) => {
             console.log(error);
             alert("Something went wrong!");

@@ -8,8 +8,8 @@
   </head>
   <body>
     <ul class="topnav">
-      <li><a class="active" href="index.html">Home</a></li>
-      <li><a href="add.html">Add ducks</a></li>        
+      <li><a href="index.html">Home</a></li>
+      <li><a class="active" href="add.html">Add ducks</a></li>        
       <li><a href="search.html">Search ducks</a></li>
       <li><a href="pond.html">Pond</a></li>
       <li class="right"><a  href="login.html">Login</a></li>
@@ -43,7 +43,8 @@
                 let request = {
                   method: "POST",
                   headers: {
-                      "Content-Type": "application/json"
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${configuration.token()}`
                   },
                   body: JSON.stringify(duck)
                 };
@@ -56,7 +57,11 @@
                   } else {
                       message = "Something went wrong! Duck data was saved successfully but duck image was not saved.";
                   }
-                } else {
+                } 
+                else if (response.status == 401) {
+                  logout();
+                }  
+                else {
                   console.log(response);
                   message = "Something went wrong! Duck data could not be saved.";
                 }
@@ -69,9 +74,16 @@
                 formData.append("file", imageInput.files[0]);
                 let request = {
                   method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${configuration.token()}`
+                  },
                   body: formData
                 };
                 let response = await fetch(host + "/ducks/" + duckId + "/image", request);
+                if (response.status == 401) {
+                  logout();
+                }
                 let result = await response.json();
                 return result;
 
