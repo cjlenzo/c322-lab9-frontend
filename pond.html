@@ -18,10 +18,12 @@
 
     <div id="pond"></div>
 
+    <script src = "configuration.js"></script>
     <script>
       let host = configuration.host();
       let ducks = [];
       displayTheDucks();
+      updateTheNavigationBar();
 
       async function getAll() {
         const headers = { "Authorization": `Bearer ${configuration.token()}` };
@@ -48,7 +50,7 @@
             <div class="flip-card-inner">
               <div class="flip-card-front">
                <img
-                   src="${host}/ducks/${duck.id}/image"
+                   src="${await getTheImage(duck.id)}"
                    alt="Duck"
                    style="width: 100%"
                 />
@@ -62,6 +64,22 @@
           div.innerHTML = innerHtml;
           pond.appendChild(div);
         }
+      }
+
+      async function getTheImage(duckId) {
+        const request = {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${configuration.token()}`
+          }
+        };
+        let response = await fetch(`${host}/ducks/${duckId}/image`, request);
+        if (response.status == 401) {
+          logout();
+          return "";
+        }
+        let imageData = await response.blob();
+        return URL.createObjectURL(imageData);
       }
     </script>
   </body>

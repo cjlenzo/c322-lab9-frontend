@@ -30,10 +30,13 @@
 
     <script src = "configuration.js"></script>
     <script>
+      let host = configuration.host();
+      let token = configuration.token();
+      let loggedIn = configuration.isLoggedIn();
       let ducks = [];
+      updateTheNavigationBar();
 
       async function getAll() {
-        let host = configuration.host();
         const headers = { "Authorization": `Bearer ${configuration.token()}` };
         return fetch(host + "/ducks", { headers })
           .then((response) => 
@@ -41,6 +44,7 @@
             if(response.status == 401) {
               logout();
             }
+            return response.json();
           })
           .catch((error) => {
             console.log(error);
@@ -59,18 +63,20 @@
         let table = document.getElementById("result");
         table.innerHTML = "";
 
-        for (let duck of ducks) {
-          if (!duckType || duck.type.toLowerCase() == duckType.toLowerCase()) {
-            let row = document.createElement("tr");
-            let cell1 = document.createElement("td");
-            let id = document.createTextNode(duck.id);
-            cell1.appendChild(id);
-            row.appendChild(cell1);
-            let cell2 = document.createElement("td");
-            let type = document.createTextNode(duck.type);
-            cell2.appendChild(type);
-            row.appendChild(cell2);
-            table.appendChild(row);
+        if (ducks && ducks.length > 0) {
+          for (let duck of ducks) {
+            if (!duckType || duck.type.toLowerCase() == duckType.toLowerCase()) {
+              let row = document.createElement("tr");
+              let cell1 = document.createElement("td");
+              let id = document.createTextNode(duck.id);
+              cell1.appendChild(id);
+              row.appendChild(cell1);
+              let cell2 = document.createElement("td");
+              let type = document.createTextNode(duck.type);
+              cell2.appendChild(type);
+              row.appendChild(cell2);
+              table.appendChild(row);
+            }
           }
         }
       }

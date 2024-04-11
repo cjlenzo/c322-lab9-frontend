@@ -40,10 +40,12 @@ async function updateTheNavigationBar() {
     const navigation = document.getElementsByClassName("topnav")[0];
     let loginTag = navigation.children[navigation.children.length - 1];
     if (configuration.isLoggedIn()) {
-        loginTag.innerHTML = `<li class = "right><a href = "#" onclick = "logout()">Logout</a></li>`;
+        loginTag.querySelector('a').textContent = 'Logout';
+        loginTag.querySelector('a').setAttribute('onclick', 'logout()');
     }
     else {
-        loginTag.innerHTML = `<li class = "right"><a href = "login.html">Login</a></li>`;
+        loginTag.querySelector('a').textContent = 'Login';
+        loginTag.querySelector('a').removeAttribute('onclick');
     }
 }
 
@@ -64,11 +66,13 @@ async function login() {
             alert("The login was successful");
             const token = await response.text();
             saveTheToken(token);
+            updateTheNavigationBar();
             location.href = "index.html";
         }
         else {
             console.log(`response status: ${response.status}`);
             removeTheToken();
+            updateTheNavigationBar();
             alert("Something went wrong!");
         }
     }
